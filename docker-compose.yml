@@ -1,0 +1,34 @@
+services:
+  mysql:
+    image: mysql:8.0.36
+    container_name: untitled-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: untitleddb
+      MYSQL_USER: untitled_app
+      MYSQL_PASSWORD: untitled_app_password
+      MYSQL_ROOT_PASSWORD: untitled_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uuntitled_app -puntitled_app_password --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mysql-client:
+    image: mysql:8.0.36
+    container_name: untitled-mysql-client
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: sleep infinity
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace:ro
+
+volumes:
+  mysql_data:

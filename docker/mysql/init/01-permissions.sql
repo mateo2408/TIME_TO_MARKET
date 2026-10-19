@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS untitleddb
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'untitled_app'@'%' IDENTIFIED BY 'untitled_app_password';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
+  ON untitleddb.* TO 'untitled_app'@'%';
+FLUSH PRIVILEGES;
