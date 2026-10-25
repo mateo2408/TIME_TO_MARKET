@@ -43,7 +43,7 @@ docker compose exec -T mysql-client mysql -h mysql -uuntitled_app -puntitled_app
 ```
 
 **Criterio de éxito:**
-- Se listan tablas como `Customer`, `Product`, `Category`, `Invoice` y `Invoice_details`.
+- Se listan tablas como `Customer`, `Product`, `Category`, `CommercialDocument` y `Invoice_details`.
 
 ---
 
