@@ -1,9 +1,12 @@
 package com.yourcompany.untitled.model;
 
 import com.yourcompany.untitled.model.Customer;
+
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 
 import com.yourcompany.untitled.calculators.NextNumberForYearCalculator;
 import org.openxava.annotations.*;
@@ -20,6 +23,18 @@ import lombok.*;
                 "}"
 )
 abstract public class CommercialDocument extends Identifiable {
+
+    @ElementCollection
+    @ListProperties(
+            "product.number, product.description, quantity, pricePerUnit, " +
+                    "amount+[" +
+                    "commercialDocument.vatPercentage," +
+                    "commercialDocument.vat," +
+                    "commercialDocument.totalAmount" +
+                    "]"
+    )
+    private Collection<Detail> details;
+
 
     @Column(length=50)
     String description;
@@ -46,7 +61,19 @@ abstract public class CommercialDocument extends Identifiable {
     @ReferenceView("Simple") // La vista llamada 'Simple' se usará para visualizar esta referencia
     Customer customer;
 
-    @ElementCollection
-    @ListProperties("product.number, product.description, quantity")
-    Collection<Detail> details;
+
+    @Digits(integer=2, fraction=0) // Para indicar su tamaño
+    BigDecimal vatPercentage;
+
+    @ReadOnly
+    @Money
+    @Calculation("sum(details.amount) * vatPercentage / 100")
+    BigDecimal vat;
+
+    @ReadOnly
+    @Money
+    @Calculation("sum(details.amount) + vat")
+    BigDecimal totalAmount;
+
+
 }
